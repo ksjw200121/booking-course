@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>美業預約系統自動化實戰課｜我是金孫</title>
+<meta name="description" content="美甲・美睫・紋繡・做臉・醫美預約　用 Claude Code 自動生成、自動部署、自動上線你自己的預約系統，後台是你自己的 Google 試算表，不用寫程式、不用找工程師。">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:#faf8f4;color:#2b2822;line-height:1.85;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:0 24px}
+h1,h2,h3{font-weight:500;line-height:1.4}
+.serif{font-family:"Noto Serif TC",Georgia,serif}
+a{color:inherit}
+
+.bar{background:#1f1d1a;color:#e8e2d5;font-size:13px;letter-spacing:.06em;text-align:center;padding:9px 16px}
+header{padding:64px 0 48px;border-bottom:1px solid #ddd6c9}
+.rule{width:44px;height:2px;background:#8a2b2b;margin-bottom:26px}
+.brand{font-size:13px;letter-spacing:.28em;color:#8b7f6b;margin-bottom:20px}
+h1{font-size:40px;letter-spacing:.02em;margin-bottom:14px}
+.sub{font-size:19px;color:#8a2b2b;margin-bottom:26px;letter-spacing:.04em}
+.lede{font-size:16px;color:#5c5346;max-width:600px}
+.tags{margin-top:26px;display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:13px;color:#6f6455;border:1px solid #ddd6c9;border-radius:3px;padding:4px 11px;background:#fff}
+
+section{padding:52px 0;border-bottom:1px solid #e6e0d4}
+.kicker{font-size:12px;letter-spacing:.18em;color:#a08c6a;margin-bottom:12px}
+h2{font-size:27px;margin-bottom:14px}
+h3{font-size:17px;margin-bottom:8px}
+p{margin-bottom:14px;font-size:15.5px;color:#3a352c}
+.muted{color:#6f6455;font-size:14px}
+.small{font-size:13px;color:#8b7f6b;line-height:1.8}
+
+.grid{display:grid;gap:16px;margin-top:22px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.card{background:#fff;border:1px solid #e6e0d4;border-radius:6px;padding:20px 22px}
+.card .n{font-size:12px;letter-spacing:.14em;color:#a08c6a;margin-bottom:7px}
+.card p{font-size:14px;margin:0;color:#5c5346}
+
+.new{background:#f0ece3;border-left:3px solid #8a2b2b;padding:24px 26px;border-radius:0 6px 6px 0;margin-top:22px}
+.new ul{list-style:none}
+.new li{font-size:15px;color:#3a352c;padding-left:22px;position:relative;margin-bottom:11px}
+.new li:before{content:"";position:absolute;left:0;top:12px;width:9px;height:2px;background:#8a2b2b}
+.new li b{font-weight:500}
+
+.compare{display:grid;gap:12px;margin-top:22px}
+.crow{background:#fff;border:1px solid #e6e0d4;border-radius:6px;padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.crow .h{font-size:12px;letter-spacing:.1em;color:#a08c6a;margin-bottom:6px}
+.crow .x{color:#8a2b2b}
+.crow .o{color:#3d5a3d}
+.crow p{font-size:14px;margin:0;color:#3a352c}
+@media(max-width:520px){.crow{grid-template-columns:1fr}}
+
+.buy{background:#f0ece3;border-radius:8px;padding:40px 34px;margin-top:26px;text-align:center}
+.price{display:flex;align-items:baseline;justify-content:center;gap:14px;margin-bottom:6px}
+.was{font-size:20px;color:#a09684;text-decoration:line-through}
+.now{font-size:44px;color:#1f1d1a;letter-spacing:.01em}
+.now small{font-size:19px;margin-right:3px}
+.badge{display:inline-block;font-size:12px;letter-spacing:.1em;background:#8a2b2b;color:#fff;border-radius:3px;padding:4px 11px;margin-bottom:20px}
+.btn{display:inline-block;background:#1f1d1a;color:#faf8f4;text-decoration:none;font-size:17px;letter-spacing:.06em;padding:16px 54px;border-radius:5px;margin:8px 0 14px}
+.btn:hover{background:#3a352c}
+.btn2{display:inline-block;background:#fff;color:#1f1d1a;text-decoration:none;font-size:15px;letter-spacing:.04em;padding:13px 32px;border-radius:5px;margin:6px 0;border:1px solid #ddd6c9}
+.pay{font-size:13px;color:#6f6455}
+.hbuy{background:#f0ece3;border:1px solid #e2dacb;border-radius:8px;padding:22px 24px;margin:28px 0 4px;
+      display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.hbuy .p1{font-size:30px;color:#1f1d1a;line-height:1.2}
+.hbuy .p1 s{font-size:16px;color:#a09684;margin-right:9px}
+.hbuy .p2{font-size:12.5px;color:#6f6455;margin-top:3px}
+.hbuy .btn{margin:0;padding:13px 34px;font-size:15.5px}
+.proof{font-size:13.5px;color:#6f6455;margin-top:14px}
+
+.shots{display:grid;gap:18px;margin-top:24px}
+.shot{background:#fff;border:1px solid #e2dacb;border-radius:8px;padding:12px}
+.shot img{width:100%;display:block;border-radius:4px;background:#eee}
+.shot .cap{font-size:12.5px;color:#8b7f6b;padding:10px 4px 2px}
+.placeholder{background:#eee7d9;border:1px dashed #c9bb9e;border-radius:4px;height:280px;display:flex;align-items:center;justify-content:center;color:#a08c6a;font-size:13px}
+
+.steps{margin-top:22px}
+.steprow{display:flex;gap:14px;padding:13px 0;border-top:1px solid #eee7db}
+.steprow:first-child{border-top:none}
+.stepn{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:#1f1d1a;color:#faf8f4;font-size:12px;display:flex;align-items:center;justify-content:center}
+.stepn.gate{background:#8a2b2b}
+.stept{font-size:14.5px;color:#3a352c}
+.stept b{font-weight:500}
+.stept .g{font-size:11.5px;color:#8a2b2b;margin-left:6px}
+
+.line{background:#eef2ea;border:1px solid #d7e2d0;border-radius:8px;padding:24px 26px;margin-top:22px;text-align:center}
+.line h3{color:#3d5a3d}
+
+.faq{margin-top:22px}
+.faq .q{font-size:15.5px;color:#1f1d1a;margin-bottom:5px;margin-top:20px}
+.faq .a{font-size:14.5px;color:#5c5346;margin:0}
+
+footer{padding:40px 0 60px;font-size:12.5px;color:#8b7f6b;line-height:1.9}
+footer .terms{background:#f2efe8;border-radius:6px;padding:18px 20px;margin-bottom:22px}
+@media(max-width:600px){h1{font-size:31px}h2{font-size:23px}.now{font-size:36px}header{padding:44px 0 36px}section{padding:40px 0}}
+</style>
+</head>
+<body>
+
+<div class="bar">Claude Code 自動化版　·　自己的 Google 帳號，自己的資料　·　不用寫程式</div>
+
+<header><div class="wrap">
+  <div class="rule"></div>
+  <div class="brand">我是金孫　出品</div>
+  <h1 class="serif">美業預約系統<br>自動化實戰課</h1>
+  <div class="sub serif">Claude Code 版</div>
+  <p class="lede">找工程師客製一個預約網站，報價一開口就是一萬五起跳，還要等好幾週。<br>
+  自己用免費表單工具兜一個，客人選的時段常常撞期，資料也留不住。<br>
+  這堂課教你把需求講給 Claude Code 聽，讓它自動幫你生成、部署、上線——<br>
+  後台就是你自己的 Google 試算表，除非你自己分享，沒有第二個人看得到。</p>
+  <div class="tags">
+    <span class="tag">美甲・美睫・紋繡</span><span class="tag">做臉・美容工作室</span><span class="tag">醫美預約諮詢</span>
+    <span class="tag">單人工作室</span><span class="tag">起始包</span><span class="tag">上線步驟文件</span><span class="tag">影片教學</span>
+  </div>
+  <div class="hbuy">
+    <div>
+      <div class="p1"><s>NT$3,000</s>NT$888</div>
+      <div class="p2">早鳥價　·　起始包＋上線步驟文件＋影片教學，一次拿到</div>
+    </div>
+    <a class="btn" href="#buy">立即購買</a>
+  </div>
+  <p class="proof">這套自動化流程實際跑過三輪真實部署測試，過程中抓出並修正 6 個真實問題——包含連 Google 官方工具本身都會踩到的平台限制。不是寫好沒測就上架的教材。</p>
+</div></header>
+
+<section><div class="wrap">
+  <div class="kicker">為什麼不是自己來</div>
+  <h2>你原本大概想過這幾種做法</h2>
+  <div class="compare">
+    <div class="crow">
+      <div><div class="h x">自己空手叫 Claude Code 生成</div><p>Claude Code 很聰明，但沒踩過的坑一樣會踩：部署權限只能手動設定、日期時間會被試算表自動轉換位移 8 小時導致悄悄重複預約——這些連 Google 官方工具本身都會出的雷，不是隨口說說，是真的抓到、測到的。</p></div>
+      <div><div class="h o">這個起始包</div><p>已經把這些雷排掉、寫進專屬設定檔裡。你的 Claude Code 讀到這份起始包，會照著已經驗證過的方式做，不用你自己去發現哪裡壞掉。</p></div>
+    </div>
+    <div class="crow">
+      <div><div class="h x">找工程師客製</div><p>報價 1.5～5 萬起，等 2～4 週，之後想改一個欄位要再溝通、再等、可能再付錢。</p></div>
+      <div><div class="h o">這堂課</div><p>跟 Claude Code 講需求，當天就能生成＋部署＋上線，之後想改內容直接講一句話。</p></div>
+    </div>
+    <div class="crow">
+      <div><div class="h x">免費表單／預約工具</div><p>不會依「選了哪些服務項目加起來要多久」自動判斷時段，客人資料留不住，也沒辦法一鍵發訊息給客人。</p></div>
+      <div><div class="h o">這堂課</div><p>時段自動判斷排不排得下、取消自動放回時段、內建訊息範本一鍵複製貼 LINE。</p></div>
+    </div>
+    <div class="crow">
+      <div><div class="h x">自己爬文兜 Google 試算表</div><p>要自己搞懂 Apps Script、部署權限設定，光是「執行身分」跟「存取權」兩個選項就足以卡關一整天。</p></div>
+      <div><div class="h o">這堂課</div><p>這兩個最容易選錯的地方，教材裡明確標出來，遇到卡住直接讓 Claude Code 幫你排查。</p></div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="kicker">適用對象</div>
+  <h2>只要你的生意需要「排時段」</h2>
+  <div class="grid g2">
+    <div class="card"><div class="n">美甲・美睫・紋繡</div><h3>多服務項目、多設計師</h3><p>選服務、選加購、選設計師，時段依總時長自動判斷排不排得下。</p></div>
+    <div class="card"><div class="n">做臉・美容工作室</div><h3>療程時間長短不一</h3><p>不同療程佔用時間不同，避免手動記錯導致客人來了卻沒空檔。</p></div>
+    <div class="card"><div class="n">醫美預約諮詢</div><h3>初診／複診分開管理</h3><p>訂金、取消政策、個資告知一次到位，符合你自己設定的流程。</p></div>
+    <div class="card"><div class="n">單人工作室</div><h3>一個人也要有系統</h3><p>只填一位服務人員，前台會自動跳過「選設計師」那一步，不會多一個沒意義的步驟。</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="kicker">實際畫面</div>
+  <h2 class="serif">系統長這樣</h2>
+  <p class="muted">以下為實際部署測試畫面，未經修飾。</p>
+  <div class="shots">
+    <div class="shot"><img src="assets/shot-service.jpg" alt="顧客端選服務畫面，右上角顯示已連線試算表">
+      <div class="cap">右上角「已連線試算表」是真的連線，不是示範模式——選好服務，價格、時長自動帶出來</div></div>
+    <div class="shot"><img src="assets/shot-receipt.jpg" alt="顧客端送出預約前的即時明細畫面">
+      <div class="cap">送出前即時明細自動算好合計金額，勾選同意條款後才能送出</div></div>
+    <div class="shot"><img src="assets/shot-sheet.webp" alt="Google 試算表後台，狀態欄自動上色">
+      <div class="cap">後台：Google 試算表自動建好「預約」分頁，狀態下拉選單、自動上色，取消／未到場會自動釋放時段</div></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="kicker">你會拿到什麼</div>
+  <h2>核心是這個起始包，不是一份說明文件</h2>
+  <p class="muted">網路上找得到「怎麼叫 AI 做預約系統」的教學，但那些教學給你的是一句提示詞，不是一套已經排除已知錯誤的系統。這個起始包是三輪真實部署、抓出 6 個真實 bug 之後，反覆修正過的成果——你買的是「已經替你踩過雷」這件事本身。</p>
+  <div class="new"><ul>
+    <li><b>起始包（核心）</b>　不是空白模板，是一份已經內建修正邏輯的 Claude Code 專案：部署權限的平台限制、日期時間位移的修正、單一服務人員自動跳過選擇……這些都不是你的 Claude Code 臨場會自己想到的東西，是已經寫進設定裡的。丟進資料夾就能用，不用自己準備、也不用自己抓錯。</li>
+    <li><b>上線步驟文件</b>　從打開 Claude Code 到網站正式上線，每一步該做什麼、會卡在哪裡、卡住怎麼辦，全部寫清楚，搭配起始包一起用。</li>
+    <li><b>影片教學</b>　從頭到尾跟著做一次的完整側錄，包含三個一定要自己動手的關卡實際長什麼樣子。</li>
+  </ul></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="kicker">流程一覽</div>
+  <h2>總共只有 3 步是你一定要自己按的</h2>
+  <p class="muted">其餘都是貼上文字、看畫面點一下的等級，出錯 Claude Code 會自己排查修正，不用自己懂程式。</p>
+  <div class="steps">
+    <div class="steprow"><div class="stepn">1</div><div class="stept">打開 Claude Code，把你的店家資料貼給它，加一句「幫我自動部署上線」</div></div>
+    <div class="steprow"><div class="stepn">2</div><div class="stept">Claude Code 自動生成你的預約網頁、建立 Google 試算表、推送程式碼</div></div>
+    <div class="steprow"><div class="stepn gate">3</div><div class="stept"><b>打開 Google 的 API 開關</b><span class="g">Google 規定</span></div></div>
+    <div class="steprow"><div class="stepn gate">4</div><div class="stept"><b>瀏覽器跳出登入畫面，選帳號按允許</b><span class="g">Google 規定</span></div></div>
+    <div class="steprow"><div class="stepn gate">5</div><div class="stept"><b>Apps Script 網頁上手動按一次「部署」</b><span class="g">Google 規定，僅第一次需要</span></div></div>
+    <div class="steprow"><div class="stepn">6</div><div class="stept">Claude Code 把網址接回你的預約頁，問你要不要順便上線 GitHub Pages</div></div>
+    <div class="steprow"><div class="stepn">7</div><div class="stept">走一次上線前檢查清單，確認真的能用，正式交給客人</div></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="kicker">購買</div>
+  <h2>把預約系統的事，交給講話就好</h2>
+  <div class="buy" id="buy">
+    <div class="price"><span class="was">NT$3,000</span><span class="now"><small>NT$</small>888</span></div>
+    <div class="badge">早鳥價</div>
+    <p class="muted" style="margin-bottom:22px">起始包＋上線步驟文件＋影片教學・一次購買，終身使用</p>
+    <p class="small" style="margin-bottom:16px;line-height:1.75">使用本課程需要你自己有 Claude Code 的使用權限（Anthropic 帳號），本課程費用不含 Claude 本身的使用費用。<br>
+    本商品為數位內容，一經提供即為完成，<b>不適用七日解除權</b>。點選購買即表示您已閱讀並同意下方購買前注意事項。</p>
+    <!-- TODO：跟 IG 合規指南同樣做法，去藍新金流後台建立這個價格的「收銀台連結」，
+         把下面連結換成 go.html 或直接貼收銀台網址，不要把 HashKey/HashIV 放進任何前端檔案 -->
+    <a class="btn" href="go.html">我已閱讀並同意，立即購買</a>
+    <div class="pay">信用卡・Apple Pay・Google Pay・ATM 轉帳</div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="kicker">還沒準備好購買</div>
+  <div class="line">
+    <h3>先拿一份免費的「美業自動化起手式」懶人包</h3>
+    <p class="muted" style="margin-bottom:18px">加 LINE 好友，之後上新課程、法規更新，第一手收到通知</p>
+    <!-- TODO：換成真的 LINE 官方帳號加好友連結 -->
+    <a class="btn2" href="#">加 LINE 好友領取</a>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="kicker">常見問題</div>
+  <h2>買之前先看這裡</h2>
+  <div class="faq">
+    <p class="q">我自己叫 Claude Code 做不就好了，為什麼要買？</p>
+    <p class="a">你可以試試看，但空手上陣會撞到我們實測抓出來的那些坑——像是部署權限只能手動設定、日期時間會被試算表自動轉換位移 8 小時這種連 Google 官方工具都會出的雷。這個起始包已經把這些問題排除掉、寫進設定裡，你買的不是一句提示詞，是三輪真實部署驗證過的成果，省下自己一個一個踩雷的時間。</p>
+
+    <p class="q">我完全不會寫程式，真的做得出來嗎？</p>
+    <p class="a">可以。你要做的是把店家資料講清楚（店名、服務項目、價格這些），實際生成程式碼、建立試算表、部署上線，全部是 Claude Code 在做。整套流程裡沒有一步需要你自己寫或改程式碼。</p>
+
+    <p class="q">要另外付 Claude Code 的錢嗎？</p>
+    <p class="a">要。這堂課教你怎麼用 Claude Code 做出這套系統，但 Claude Code 本身的使用權限（Anthropic 帳號）需要你自己另外準備，不包含在課程費用裡。</p>
+
+    <p class="q">中途卡住、跳出錯誤訊息怎麼辦？</p>
+    <p class="a">除了三個 Google 規定一定要本人操作的關卡，其餘任何錯誤都可以直接把畫面截圖給 Claude Code，跟它說「這裡跳出這個」，它會自己排查、自己修正，不需要你自己懂錯誤訊息在說什麼。</p>
+
+    <p class="q">之後想改內容（改價格、加服務項目）要另外收費嗎？</p>
+    <p class="a">不用。這是你自己的系統，之後想怎麼改都直接跟 Claude Code 講一句話就好，跟做第一版時是同一套方式，不需要再回來找我或另外付費。</p>
+
+    <p class="q">後台資料安全嗎？會不會被別人看到？</p>
+    <p class="a">後台就是一份你自己 Google 帳號底下的試算表，除非你自己按分享，不會有第二個人看得到，也沒有另外的登入帳號密碼系統需要你管理。</p>
+
+    <p class="q">我不是美業，是其他也需要預約的行業，能用嗎？</p>
+    <p class="a">這套系統設計給任何「需要排時段」的服務型生意，教材以美業（美甲、美睫等）為範例，但客製化的方式同樣適用其他行業，跟 Claude Code 講清楚你的行業別跟服務項目即可。</p>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="terms">
+    <b>購買前請注意</b><br>
+    一、本商品為非以有形媒介提供之數位內容，一經提供即為完成。依消費者保護法第 19 條及行政院公告之通訊交易解除權合理例外情事適用準則，屬得排除七日解除權適用之合理例外情事；<b>點選購買即表示您已知悉並同意排除七日解除權之適用</b>。<br>
+    二、本課程教授的是自動化操作流程，實際生成內容與部署結果可能因您提供的資料、選用的模型版本、Google／GitHub 平台當下政策而有差異，不保證特定功能或外觀。<br>
+    三、課程費用不含 Claude Code（Anthropic）、Google、GitHub 等第三方服務本身之使用費用。<br>
+    四、購買者取得個人使用之非專屬授權，不得轉售、轉贈、公開傳輸或用於營利性教學。<br>
+    五、完整使用條款與免責聲明另附於購買後收到的檔案內。
+  </div>
+  © 2026 我是金孫　·　美業預約系統自動化實戰課　Claude Code 版<br>
+  Instagram @fang.0721
+</div></footer>
+
+</body>
+</html>
